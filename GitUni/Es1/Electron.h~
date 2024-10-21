@@ -1,0 +1,8 @@
+#ifndef _ELECTRON
+#define _ELECTRON
+#include "Particle.h"
+#include <cmath>
+class Electron:public Particle{
+ Electron():Particle(9.1e-31, 1.6e-19){}
+}
+#endif

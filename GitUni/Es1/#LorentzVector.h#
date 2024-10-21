@@ -1,0 +1,24 @@
+#ifndef _LORENTZVECTOR
+#define _LORENTZVECTOR
+#include "Vector3.h"
+#include "Particle.h"
+
+class LorentzVector : public Vector3{
+ public:
+ LorentzVector(double ct = 0, Vector3 pos = Vector3()):m_t,m_pos{};
+  double Mod();
+  double T();
+  void T(double);
+  LorentzVector operator+(LorentzVector);
+  LorentzVector operator-(LorentzVector);
+  LorentzVector operator-();
+  LorentzVector operator*(double);
+  double operator*(LorentzVector);
+ private:
+  double m_t;
+  Vector3 m_pos;
+};
+
+std::ostream& operator<<(std::ostream& output, LorentzVector a);
+std::istream& operator>>(std::istream& input, LorentzVector& a);
+#endif

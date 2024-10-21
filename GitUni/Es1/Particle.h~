@@ -1,0 +1,17 @@
+#ifndef _PARTICLE
+#define _PARTICLE
+class Particle{
+ public:
+  Particle(double mass=0, double charge=0):m_mass(mass),m_charge(charge){}
+  double Mass() {return  m_mass;}
+  double Charge(){return m_charge;}
+  void Mass(double m){m_mass = m;}
+  void Charge(double q){m_charge = q;}
+ private:
+  double m_mass;
+  double m_charge;
+};
+
+
+
+#endif
