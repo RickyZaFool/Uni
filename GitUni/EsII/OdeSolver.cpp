@@ -93,10 +93,28 @@ void OdeSolver::Step(){
       m_p[i].V(m_p[i].V() + w2[i]);
     }
     
-    // STEP 5 implementare Runge Kutta al secondo ordine
-    // * Riprendere il calcolo di k1/w1
-    // * Per il calcolo di k2/w2 devo dotarmi di una copia di m_p
-    //   calcolata nel punto intermedio dell'intervallo temporale
+  } else if (m_method == "VelVel"){
+    vector<Vector3>  k1(m_p.size());
+    vector<Vector3>  w1(m_p.size());
+    vector<Vector3>  a1(m_p.size());
+    vector<MatPoint> p_temp(m_p);
+
+    for (unsigned int i=0;i<m_p.size();i++){
+      k1[i] = m_h*m_p[i].V()+ 0.5*m_h*m_h*m_A(i,m_t,m_p);
+      p_temp[i].R(p_temp[i].R()+k1[i]);
+    }
+    for (unsigned int i=0;i<m_p.size();i++){
+      a1[i] = m_A(i,m_t,p_temp);
+    }
+
+    for (unsigned int i=0;i<m_p.size();i++){
+      w1[i] = (a1[i]+m_A(i,m_t,m_p))*(m_h*0.5);
+    }
+
+    for (unsigned int i=0;i<m_p.size();i++){
+      m_p[i].R(m_p[i].R() + k1[i]);
+      m_p[i].V(m_p[i].V() + w1[i]);
+    }
   }
   m_t += m_h;
   
