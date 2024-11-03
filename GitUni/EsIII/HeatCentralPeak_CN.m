@@ -22,7 +22,7 @@ function HeatCentralPeak_CN
   T((N-1)/2+1) = T0+DeltaT;
   % Evoluzione temporale
   t    = 0; tend = 1e-3;
-
+  plot(x,T);
   while t<tend
     plot(x,T);
     Tprec(1)=2*T(1)+(2/eta-2)*T(2)+T(3);
