@@ -11,5 +11,10 @@ tree = ROOT.TTree()
 tree.ReadFile("dati.dat","xy/D")
 
 h = ROOT.TH1D("h","h",80,0,40)
-
 tree.UnbinnedFit("se","xy")
+tree.Draw("xy>>h")
+
+se.SetParameter(0, h.GetEntries()*h.GetBinWidth(1))
+se.Draw("SAME")
+
+ROOT.gApplication.Run(True)
