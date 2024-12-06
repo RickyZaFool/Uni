@@ -1,0 +1,6 @@
+IR      883 12
+rosso   633  9
+arancio 589  6
+verde   534 13
+blu     473 13
+UV      382  6
