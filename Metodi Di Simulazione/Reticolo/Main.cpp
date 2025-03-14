@@ -84,8 +84,8 @@ int main(){
 	float theta = 0.5;
 	float nOfParticles = sideLenght*sideLenght*theta;
 	//Particles position arrays
-	int X[nOfParticles] = {0};
-	int Y[nOfParticles] = {0};
+	int X[int(nOfParticles)] = {0};
+	int Y[int(nOfParticles)] = {0};
 	for(int i = 0; i < nOfParticles; i++){
 		int x_setup = int(rnd.Rndm()*sideLenght);
 		int y_setup = int(rnd.Rndm()*sideLenght);
@@ -119,7 +119,7 @@ int main(){
 	float pmean = 0;
 	//NEWSTEPS with 2 loops
 	
-	for(int m = 0; m < MCS; m++{ //Start mcs
+	for(int m = 0; m < MCS; m++){ //Start mcs
 		for(int step = 0; step < nOfParticles; step++){ //Start internal loop
 			//select random particle
 			int random_particle = int(rnd.Rndm()*nOfParticles);
@@ -142,7 +142,7 @@ int main(){
 			if(!grid[x_move][y_move]){ //Start destination check
 				neighs_new = numberOfNeighbors(grid, x_move, y_move, sideLenght) - 1;
 				int energyDelta = neighs_new - neighs;
-				float betaj = 2
+				float betaj = 2;
 				float prob = exp(-betaj(energyDelta));
 				float moveCheck = rnd.Rndm();
 				if(moveCheck < prob){//Start prob move check
@@ -170,7 +170,7 @@ int main(){
 			p = static_cast<float>(cellsOnA - cellsOnB)/(cellsOnA + cellsOnB);
 			psum += p;
 		}
-		if((100*float(m))/MCS % 10 == 0){
+		if((100*float(m))/MCS % 10.0f == 0){
 			cout << (100*float(m))/MCS << "%, order parameter " << p << endl;	
 		}
 	} //End mcs
