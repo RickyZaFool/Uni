@@ -143,7 +143,7 @@ int main(){
 				neighs_new = numberOfNeighbors(grid, x_move, y_move, sideLenght) - 1;
 				int energyDelta = neighs_new - neighs;
 				float betaj = 2;
-				float prob = exp(-betaj(energyDelta));
+				float prob = exp(-betaj*(energyDelta));
 				float moveCheck = rnd.Rndm();
 				if(moveCheck < prob){//Start prob move check
 					grid[x_rand][y_rand] = 0;
@@ -170,13 +170,12 @@ int main(){
 			p = static_cast<float>(cellsOnA - cellsOnB)/(cellsOnA + cellsOnB);
 			psum += p;
 		}
-		if((100*float(m))/MCS % 10.0f == 0){
+		if(int((100*float(m))/MCS) % 10 == 0){
 			cout << (100*float(m))/MCS << "%, order parameter " << p << endl;	
 		}
 	} //End mcs
 	pmean = 20 * psum / MCS;
-
-	cout << "final energy in J units " << calculateEnergy(grid, sideLenght) << endl;
+	cout << "order parameter mean " << pmean << endl;
 	cout << "************** FINAL GRID **************" << endl;
 	for(int i = 0; i < sideLenght; i++){
 		for(int j = 0; j < sideLenght; j++){
