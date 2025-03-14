@@ -97,8 +97,7 @@ int main(){
 			X[i] = x_setup;
 			Y[i] = y_setup;
 		}
-	}
-	
+	}	
 	//START GRID DEBUG
 	cout << "starting energy in J units " << calculateEnergy(grid, sideLenght) << endl;
 	cout << "************** STARTING GRID **************" << endl;
@@ -110,15 +109,12 @@ int main(){
 			else{cout << "[ ]";}
 		}cout << endl ;
 	}
-	
 	//Setup completed
-
 	int x_rand = 0, y_rand = 0, neighs = 0, neighs_new = 0, x_move = 0, y_move = 0;
 	float p = 0;
 	float psum = 0;
 	float pmean = 0;
 	//NEWSTEPS with 2 loops
-	
 	for(int m = 0; m < MCS; m++){ //Start mcs
 		for(int step = 0; step < nOfParticles; step++){ //Start internal loop
 			//select random particle
