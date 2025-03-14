@@ -63,14 +63,13 @@ double calculateEnergy(vector<vector<int>> grid, int sideLenght){
 //CALCULATE ENERGY END
 //MAIN START
 int main(){
-	float elapsedTime = time(0);
 	//declare a grid
 	int sideLenght;
 	cout << "grid size  " ;
 	cin >> sideLenght;
-	int steps;
-	cout << endl << "steps ";
-	cin >> steps;
+	int MCS;
+	cout << endl << "MCS ";
+	cin >> MCS;
 	cout << endl;
 	vector<vector<int>> grid(sideLenght,vector<int>(sideLenght));
 	//set each node to 0
@@ -82,8 +81,12 @@ int main(){
 	//fill with a random configuration, a fraction of the nodes filled with particles
 	TRandom3 rnd;
 	rnd.SetSeed(time(0));
-	float nodesToFill = sideLenght*sideLenght/2;
-	for(int i = 0; i < nodesToFill; i++){
+	float theta = 0.5;
+	float nOfParticles = sideLenght*sideLenght*theta;
+	//Particles position arrays
+	int X[nOfParticles] = {0};
+	int Y[nOfParticles] = {0};
+	for(int i = 0; i < nOfParticles; i++){
 		int x_setup = int(rnd.Rndm()*sideLenght);
 		int y_setup = int(rnd.Rndm()*sideLenght);
 		if(grid[x_setup][y_setup]){
@@ -91,15 +94,16 @@ int main(){
 		}
 		else{
 			grid[x_setup][y_setup]=1;
+			X[i] = x_setup;
+			Y[i] = y_setup;
 		}
 	}
 	
-	//SETUP GRID
+	//START GRID DEBUG
 	cout << "starting energy in J units " << calculateEnergy(grid, sideLenght) << endl;
 	cout << "************** STARTING GRID **************" << endl;
 	for(int i = 0; i < sideLenght; i++){
 		for(int j = 0; j < sideLenght; j++){
-			//if(i == x_debug && j == y_debug){grid[i][j] += 10; }
 			if(grid[i][j]){
 				cout << "[*]";
 			}
@@ -108,95 +112,79 @@ int main(){
 	}
 	
 	//Setup completed
-	
-	//Steps:
-	int x_rand, y_rand, neighs, neighs_new, x_move, y_move = 0;
-	for(int s = 0; s < steps; s++){
-		// select a random particle that doesn't have 0 or 4 neighbors
-		int checkedParticles = 0;
-		while(true){
-			x_rand = int(rnd.Rndm()*sideLenght);
-			y_rand = int(rnd.Rndm()*sideLenght);
-			if(grid[x_rand][y_rand]){
-				neighs = numberOfNeighbors(grid, x_rand, y_rand, sideLenght);
-				if(neighs != 4 && neighs > 0){
-					break;
-				}
-			}
-			checkedParticles++;
-		}
 
-	//select a random direction
-		x_move = x_rand;
-		y_move = y_rand;
-		auto [dir_x,dir_y] = getRandomDirection(rnd);
-		x_move = x_rand+dir_x;
-		y_move = y_rand+dir_y;
-		if(x_move == sideLenght){x_move = 0;}
-		if(y_move == sideLenght){y_move = 0;}
-		if(x_move < 0){x_move = sideLenght-1;}
-		if(y_move < 0){y_move = sideLenght-1;}
-		if(grid[x_move][y_move] != 0){
+	int x_rand = 0, y_rand = 0, neighs = 0, neighs_new = 0, x_move = 0, y_move = 0;
+	float p = 0;
+	float psum = 0;
+	float pmean = 0;
+	//NEWSTEPS with 2 loops
+	
+	for(int m = 0; m < MCS; m++{ //Start mcs
+		for(int step = 0; step < nOfParticles; step++){ //Start internal loop
+			//select random particle
+			int random_particle = int(rnd.Rndm()*nOfParticles);
+			x_rand = X[random_particle];
+			y_rand = Y[random_particle];
+			if(!grid[x_rand][y_rand]){ //DEBUG >
+				cout << "Error 404 particle not found" << endl;
+			} // < DEBUG
+			//select random direction
 			x_move = x_rand;
 			y_move = y_rand;
-		}
-		neighs_new = numberOfNeighbors(grid, x_move, y_move, sideLenght) - 1;
-		if(neighs_new < neighs || neighs_new == neighs){   //should always move.
-			grid[x_rand][y_rand] = 0;
-			grid[x_move][y_move] = 1;
-		}
-		else{
-			int energyDelta = neighs_new - neighs;
-			float betaj = 2
-      float prob = exp(-betaj(energyDelta));
-			float moveCheck = rnd.Rndm();
-			if(moveCheck < prob){
-				grid[x_rand][y_rand] = 0;
-				grid[x_move][y_move] = 1;		
+			auto [dir_x,dir_y] = getRandomDirection(rnd);
+			x_move = x_rand+dir_x;
+			y_move = y_rand+dir_y;
+			//PACMAN YEAHHHHH
+			if(x_move == sideLenght){x_move = 0;}
+			if(y_move == sideLenght){y_move = 0;}
+			if(x_move < 0){x_move = sideLenght-1;}
+			if(y_move < 0){y_move = sideLenght-1;}
+			if(!grid[x_move][y_move]){ //Start destination check
+				neighs_new = numberOfNeighbors(grid, x_move, y_move, sideLenght) - 1;
+				int energyDelta = neighs_new - neighs;
+				float betaj = 2
+				float prob = exp(-betaj(energyDelta));
+				float moveCheck = rnd.Rndm();
+				if(moveCheck < prob){//Start prob move check
+					grid[x_rand][y_rand] = 0;
+					grid[x_move][y_move] = 1;
+					X[random_particle] = x_move;
+					Y[random_particle] = y_move;
+				}//End prob move check
+			} //End destination check
+		} //End internal loop
+		if(m % 20 == 0){
+			int cellsOnA = 0, cellsOnB = 0;
+			for(int i = 0; i < sideLenght; i++){
+				for(int j = 0; j < sideLenght; j++){
+					if(grid[i][j]){
+						if((i+j) % 2 != 0){
+							cellsOnA++;
+						}
+						else{
+							cellsOnB++;
+						}
+					}
+				}
 			}
+			p = static_cast<float>(cellsOnA - cellsOnB)/(cellsOnA + cellsOnB);
+			psum += p;
 		}
-		if(roundf(20*float(s)/steps) == 20*float(s)/steps){
-			cout << 100*float(s)/steps << "%   " << calculateEnergy(grid, sideLenght) << endl; //percentage buffer
+		if((100*float(m))/MCS % 10 == 0){
+			cout << (100*float(m))/MCS << "%, order parameter " << p << endl;	
 		}
-		if(!calculateEnergy(grid, sideLenght)){
-			break;
-		}
-	}
-	
-	//DEBUG FINAL
+	} //End mcs
+	pmean = 20 * psum / MCS;
 
-	//int x_debug = 0;
-	//int y_debug = 1;
-	cout << endl << "final energy in J units " << calculateEnergy(grid, sideLenght) << endl;
-	cout << "************** FINAL GRID **************" << endl;	
+	cout << "final energy in J units " << calculateEnergy(grid, sideLenght) << endl;
+	cout << "************** FINAL GRID **************" << endl;
 	for(int i = 0; i < sideLenght; i++){
 		for(int j = 0; j < sideLenght; j++){
-			//if(i == x_debug && j == y_debug){grid[i][j] += 10; }
 			if(grid[i][j]){
 				cout << "[*]";
 			}
 			else{cout << "[ ]";}
 		}cout << endl ;
 	}
-	//cout << "Neighbors of debug cell " << numberOfNeighbors(grid, x_debug, y_debug, sideLenght) << endl;
-	//ORDER PARAMETER P
-	int cellsOnA = 0, cellsOnB = 0;
-	for(int i = 0; i < sideLenght; i++){
-		for(int j = 0; j < sideLenght; j++){
-			if(grid[i][j]){
-				if((i+j) % 2 != 0){
-					cellsOnA++;
-				}
-				else{
-					cellsOnB++;
-				}
-			}
-		}
-	}
-	cout << cellsOnA << "  " << cellsOnB << endl;
-	float p = static_cast<float>(cellsOnA - cellsOnB)/(cellsOnA + cellsOnB) ;
-	cout << "Order parameter " << p << endl;
-	elapsedTime = time(0) - elapsedTime;
-	cout << endl <<"elapsed time:" << elapsedTime << endl; 
 	return 0;
-}
+} //End main
