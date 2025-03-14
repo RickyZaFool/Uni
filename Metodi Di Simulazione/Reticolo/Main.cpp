@@ -1,9 +1,11 @@
 #include <TRandom3.h>
 #include <iostream>
+#include <fstream>
 #include <cmath>
 
 using namespace std;
-
+//FILE
+ofstream ofile("data.dat");
 //DIRECTIONS TO KEEP IT CLEAN
 const vector<pair<int, int>> directions = {
     {0, -1},  // Up
@@ -27,23 +29,10 @@ int numberOfNeighbors(vector<vector<int>> grid, int x, int y, int sideLenght){
 	if(upY == sideLenght){upY = 0;}
 	if(downX < 0){downX = sideLenght-1;}
 	if(downY < 0){downY = sideLenght-1;}
-	
-	if(grid[upX][y]){
-		neighbors++;
-		//cout << " down neighbor " ;
-	}
-	if(grid[downX][y]){
-		neighbors++;
-		//cout << " up neighbor" ;
-	}
-	if(grid[x][upY]){
-		neighbors++;
-		//cout << " right neighbor " ;
-	}
-	if(grid[x][downY]){
-		neighbors++;
-		//cout << " left neighbor " ;
-	}
+	if(grid[upX][y]){neighbors++;}
+	if(grid[downX][y]){neighbors++;}
+	if(grid[x][upY]){neighbors++;}
+	if(grid[x][downY]){neighbors++;}
 	return neighbors;
 }
 //NUMBER OF NEIGHBORS END
@@ -99,7 +88,6 @@ int main(){
 		}
 	}	
 	//START GRID DEBUG
-	cout << "starting energy in J units " << calculateEnergy(grid, sideLenght) << endl;
 	cout << "************** STARTING GRID **************" << endl;
 	for(int i = 0; i < sideLenght; i++){
 		for(int j = 0; j < sideLenght; j++){
@@ -136,9 +124,10 @@ int main(){
 			if(x_move < 0){x_move = sideLenght-1;}
 			if(y_move < 0){y_move = sideLenght-1;}
 			if(!grid[x_move][y_move]){ //Start destination check
+				neighs = numberOfNeighbors(grid, x_rand, y_rand, sideLenght);
 				neighs_new = numberOfNeighbors(grid, x_move, y_move, sideLenght) - 1;
 				int energyDelta = neighs_new - neighs;
-				float betaj = 2;
+				float betaj = 4;
 				float prob = exp(-betaj*(energyDelta));
 				float moveCheck = rnd.Rndm();
 				if(moveCheck < prob){//Start prob move check
@@ -164,10 +153,11 @@ int main(){
 				}
 			}
 			p = static_cast<float>(cellsOnA - cellsOnB)/(cellsOnA + cellsOnB);
+			ofile << p << endl;
 			psum += p;
 		}
-		if(int((100*float(m))/MCS) % 10 == 0){
-			cout << (100*float(m))/MCS << "%, order parameter " << p << endl;	
+		if(int(float(m)*100/MCS) == float(m)*100/MCS){
+			cout << float(m)*100/MCS << "%  " << p << endl;
 		}
 	} //End mcs
 	pmean = 20 * psum / MCS;
