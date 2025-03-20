@@ -2,7 +2,7 @@
 
   ifstream file("data.dat");
 
-  double p;
+  int p;
   TGraphErrors gr;
   int i = 0;
   while(file>>p){;

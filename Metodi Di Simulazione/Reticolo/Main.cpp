@@ -75,6 +75,7 @@ int main(){
 	//Particles position arrays
 	int X[int(nOfParticles)] = {0};
 	int Y[int(nOfParticles)] = {0};
+	int movedTimes[int(nOfParticles)] = {0};
 	for(int i = 0; i < nOfParticles; i++){
 		int x_setup = int(rnd.Rndm()*sideLenght);
 		int y_setup = int(rnd.Rndm()*sideLenght);
@@ -126,8 +127,8 @@ int main(){
 			if(!grid[x_move][y_move]){ //Start destination check
 				neighs = numberOfNeighbors(grid, x_rand, y_rand, sideLenght);
 				neighs_new = numberOfNeighbors(grid, x_move, y_move, sideLenght) - 1;
-				int energyDelta = neighs_new - neighs;
-				float betaj = 4;
+				float energyDelta = (neighs_new - neighs);
+				float betaj = 3;
 				float prob = exp(-betaj*(energyDelta));
 				float moveCheck = rnd.Rndm();
 				if(moveCheck < prob){//Start prob move check
@@ -135,6 +136,7 @@ int main(){
 					grid[x_move][y_move] = 1;
 					X[random_particle] = x_move;
 					Y[random_particle] = y_move;
+					movedTimes[random_particle]++;
 				}//End prob move check
 			} //End destination check
 		} //End internal loop
@@ -153,7 +155,7 @@ int main(){
 				}
 			}
 			p = static_cast<float>(cellsOnA - cellsOnB)/(cellsOnA + cellsOnB);
-			ofile << p << endl;
+			//ofile << p << endl;
 			psum += p;
 		}
 		if(int(float(m)*100/MCS) == float(m)*100/MCS){
@@ -162,6 +164,10 @@ int main(){
 	} //End mcs
 	pmean = 20 * psum / MCS;
 	cout << "order parameter mean " << pmean << endl;
+	for(int particle; particle < nOfParticles; particle++){
+		cout << "ping" << endl;
+		ofile << movedTimes[particle] << endl;
+	}
 	cout << "************** FINAL GRID **************" << endl;
 	for(int i = 0; i < sideLenght; i++){
 		for(int j = 0; j < sideLenght; j++){

@@ -9,3 +9,5 @@ Main: Main.cpp
 	$(CC) $(CFLAGS) -o Main Main.cpp $(CFLAGSROOT) $(LIBSROOT)
 clean:
 	rm *.o
+Media: Media.cpp
+	$(CC) $(CFLAGS) -o Media Media.cpp $(CFLAGSROOT) $(LIBSROOT)
