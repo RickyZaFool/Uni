@@ -3,6 +3,7 @@
 #include <TGraphErrors.h>
 #include <TCanvas.h>
 #include <TSystem.h>
+#include <fstream>
 using namespace std;
 
 GridMSAF Grid;
@@ -23,6 +24,7 @@ float calculateP(GridMSAF grid){
 }
 
 int main(){
+    ofstream ofile("data.dat");
     int Seed = -1;
 	cout << "Seed (-1 to have random seed)";
 	cin >> Seed;
@@ -42,6 +44,7 @@ int main(){
 	cin >> order;
     if(order == "y"){
         isOrdered = true;
+        cout << "ordered " << endl;
     }
     if(Seed != -1){
         rand.SetSeed(Seed);
@@ -88,8 +91,8 @@ int main(){
             }
         }
         if(!(mcs%20)){
-            Grid.PaintTheGrid();
-            cout << calculateP(Grid) << endl; 
+            //Grid.PaintTheGrid();
+            ofile << calculateP(Grid) << endl; 
         }
     }
     cout << "end" << endl;
