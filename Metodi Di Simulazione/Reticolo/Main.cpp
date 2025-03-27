@@ -2,10 +2,16 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <TApplication.h>
+#include <TCanvas.h>
+#include <TH2D.h>
+#include <TSystem.h>
 
 using namespace std;
 //FILE
 ofstream ofile("data.dat");
+TApplication app("app",0,NULL);
+TCanvas c1;
 //DIRECTIONS TO KEEP IT CLEAN
 const vector<pair<int, int>> directions = {
     {0, -1},  // Up
@@ -53,12 +59,20 @@ double calculateEnergy(vector<vector<int>> grid, int sideLenght){
 //MAIN START
 int main(){
 	//declare a grid
+	float betaj;
+	cout << "beta*j ";
+	cin >> betaj;
 	int sideLenght;
-	cout << "grid size  " ;
+	cout << endl <<  "grid size  " ;
 	cin >> sideLenght;
+	TH2D histo("histo", "Sim", sideLenght, 0.0, sideLenght, sideLenght, 0.0, sideLenght);
 	int MCS;
 	cout << endl << "MCS ";
 	cin >> MCS;
+	cout << endl;
+	int ordered = 1;
+	cout << endl << "ordered? ";
+	cin >> ordered;
 	cout << endl;
 	vector<vector<int>> grid(sideLenght,vector<int>(sideLenght));
 	//set each node to 0
@@ -76,18 +90,34 @@ int main(){
 	int X[int(nOfParticles)] = {0};
 	int Y[int(nOfParticles)] = {0};
 	int movedTimes[int(nOfParticles)] = {0};
-	for(int i = 0; i < nOfParticles; i++){
-		int x_setup = int(rnd.Rndm()*sideLenght);
-		int y_setup = int(rnd.Rndm()*sideLenght);
-		if(grid[x_setup][y_setup]){
-			i--;
-		}
-		else{
-			grid[x_setup][y_setup]=1;
-			X[i] = x_setup;
-			Y[i] = y_setup;
-		}
-	}	
+	if(!ordered){
+		for(int i = 0; i < nOfParticles; i++){
+			int x_setup = int(rnd.Rndm()*sideLenght);
+			int y_setup = int(rnd.Rndm()*sideLenght);
+			if(grid[x_setup][y_setup]){
+				i--;
+			}
+			else{
+				grid[x_setup][y_setup]=1;
+				X[i] = x_setup;
+				Y[i] = y_setup;
+			}
+		}	
+	}
+	else{
+		for(int i = 0; i < nOfParticles; i++){
+			int x_setup = int(rnd.Rndm()*sideLenght);
+			int y_setup = int(rnd.Rndm()*sideLenght);
+			if(grid[x_setup][y_setup] || (x_setup + y_setup) % 2 == 0){
+				i--;
+			}
+			else{
+				grid[x_setup][y_setup]=1;
+				X[i] = x_setup;
+				Y[i] = y_setup;
+			}
+		}	
+	}
 	//START GRID DEBUG
 	cout << "************** STARTING GRID **************" << endl;
 	for(int i = 0; i < sideLenght; i++){
@@ -110,9 +140,6 @@ int main(){
 			int random_particle = int(rnd.Rndm()*nOfParticles);
 			x_rand = X[random_particle];
 			y_rand = Y[random_particle];
-			if(!grid[x_rand][y_rand]){ //DEBUG >
-				cout << "Error 404 particle not found" << endl;
-			} // < DEBUG
 			//select random direction
 			x_move = x_rand;
 			y_move = y_rand;
@@ -128,7 +155,6 @@ int main(){
 				neighs = numberOfNeighbors(grid, x_rand, y_rand, sideLenght);
 				neighs_new = numberOfNeighbors(grid, x_move, y_move, sideLenght) - 1;
 				float energyDelta = (neighs_new - neighs);
-				float betaj = 3;
 				float prob = exp(-betaj*(energyDelta));
 				float moveCheck = rnd.Rndm();
 				if(moveCheck < prob){//Start prob move check
@@ -145,29 +171,31 @@ int main(){
 			for(int i = 0; i < sideLenght; i++){
 				for(int j = 0; j < sideLenght; j++){
 					if(grid[i][j]){
+						histo.SetBinContent(i+1,j+1,1);
 						if((i+j) % 2 != 0){
 							cellsOnA++;
 						}
 						else{
 							cellsOnB++;
 						}
+						histo.Draw("COLZ");
+						gPad->Modified(); 
+						gPad->Update();
 					}
+					else{histo.SetBinContent(i+1,j+1,0);}
 				}
 			}
 			p = static_cast<float>(cellsOnA - cellsOnB)/(cellsOnA + cellsOnB);
-			//ofile << p << endl;
+			ofile << p << endl;
 			psum += p;
-		}
-		if(int(float(m)*100/MCS) == float(m)*100/MCS){
-			cout << float(m)*100/MCS << "%  " << p << endl;
 		}
 	} //End mcs
 	pmean = 20 * psum / MCS;
 	cout << "order parameter mean " << pmean << endl;
+	/*
 	for(int particle; particle < nOfParticles; particle++){
-		cout << "ping" << endl;
 		ofile << movedTimes[particle] << endl;
-	}
+	} */
 	cout << "************** FINAL GRID **************" << endl;
 	for(int i = 0; i < sideLenght; i++){
 		for(int j = 0; j < sideLenght; j++){
@@ -177,5 +205,6 @@ int main(){
 			else{cout << "[ ]";}
 		}cout << endl ;
 	}
+	app.Run(true);
 	return 0;
 } //End main
