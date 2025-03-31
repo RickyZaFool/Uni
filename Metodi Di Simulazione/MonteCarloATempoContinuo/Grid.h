@@ -14,9 +14,18 @@ class Grid
 public:
 
     //constructors
-    void Grid(int sideLength, GridStatus status);                                              //This constructors creates a completely void grid.
-    void Grid(int sideLength, int seed = -1, float theta = 0.5, bool ordered = false);
+    Grid(int sideLength, GridStatus status);                                              //This constructors creates a completely void grid.
+    Grid(int sideLength, int seed = -1, float theta = 0.5, bool ordered = false);
     
+    //functions that handle the coordinates
+    int PosInGrid(int X, int Y);
+    int XOfPosition(int position);
+    int YOfPosition(int position);
+    int UpNeighbor(int position);
+    int DownNeighbor(int position);
+    int LeftNeighbor(int position);
+    int RightNeighbor(int position);
+
     //functions that place particles on the grid
     void PlaceParticle(int position);
     void PlaceParticle(int X, int Y);
@@ -30,20 +39,11 @@ public:
     int PosOfParticle(int particle);
     int XOfParticle(int particle);
     int YOfParticle(int particle);
-
+    
     //functions that check if a position is occupied
     bool IsOccupied(int position);
-    bool IsOccupied(int X, int X);    
+    bool IsOccupied(int X, int Y);    
     
-    //functions that handle the coordinates
-    int PosInGrid(int X, int Y);
-    int XOfPosition(int position);
-    int YOfPosition(int position);
-    int UpNeighbor(int position);
-    int DownNeighbor(int position);
-    int LeftNeighbor(int position);
-    int RightNeighbor(int position);
-
     //functions that show informations about the grid
     void PaintTheGrid();
     int GetNumberOfParticles();

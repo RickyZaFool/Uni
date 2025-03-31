@@ -5,9 +5,9 @@ LIBSROOT   = `root-config --glibs`
 
 all: Main
 
-grid_class.o: grid_class.cpp
-	$(CC) $(CFLAGS) -c grid_class.cpp  $(CFLAGSROOT)
-Main: Main.cpp grid_class.o
-	$(CC) $(CFLAGS) -o Main Main.cpp grid_class.o $(CFLAGSROOT) $(LIBSROOT)
+Grid.o: Grid.cpp
+	$(CC) $(CFLAGS) -c Grid.cpp  $(CFLAGSROOT)
+Main: Main.cpp Grid.o
+	$(CC) $(CFLAGS) -o Main Main.cpp Grid.o $(CFLAGSROOT) $(LIBSROOT)
 clean:
 	rm *.o
