@@ -3,6 +3,7 @@
 #include <TMath.h>
 #include <TGraph.h>
 #include <TGraphErrors.h>
+#include <TF1.h>
 #include <TCanvas.h>
 #include <TApplication.h>
 using namespace std;
@@ -23,7 +24,9 @@ int main(){
 	TCanvas c1;
 	c1.Divide(4 , 2);
 	vector<TGraph> gr(filenames.size());
+	TF1 f("f","[0]*x+[1]");
 	for(unsigned long int file=0; file < filenames.size(); file++ ){
+		cout << file << endl;
 		c1.cd(file+1);
 		float time=0, V=0, uselessV=0;
 		int i = 0;
@@ -37,14 +40,10 @@ int main(){
 		}
 		c1.Update();
 	}
-	/*
-	TGraphErrors g1;
-	while(ifile >> time >> V >> uselessV){
-		g1.SetPoint(i,time,V);
-		i++;
+	for(unsigned long int file=0; file < filenames.size(); file++ ){
+		gr[file].Fit("f");
 	}
-	*/
-	cout << "gets here" << endl;
+
 	app.Run(true);
 	return 0;
 }

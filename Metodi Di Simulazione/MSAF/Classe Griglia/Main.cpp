@@ -91,7 +91,7 @@ int main(){
             }
         }
         if(!(mcs%20)){
-            //Grid.PaintTheGrid();
+            Grid.PaintTheGrid();
             ofile << calculateP(Grid) << endl; 
         }
     }
