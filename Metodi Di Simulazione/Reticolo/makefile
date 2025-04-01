@@ -5,9 +5,9 @@ LIBSROOT   = `root-config --glibs`
 
 all: Main
 
-Main: Main.cpp
-	$(CC) $(CFLAGS) -o Main Main.cpp $(CFLAGSROOT) $(LIBSROOT)
+Grid.o: Grid.cpp
+	$(CC) $(CFLAGS) -c Grid.cpp  $(CFLAGSROOT)
+Main: Main.cpp Grid.o
+	$(CC) $(CFLAGS) -o Main Main.cpp Grid.o $(CFLAGSROOT) $(LIBSROOT)
 clean:
 	rm *.o
-Media: Media.cpp
-	$(CC) $(CFLAGS) -o Media Media.cpp $(CFLAGSROOT) $(LIBSROOT)
