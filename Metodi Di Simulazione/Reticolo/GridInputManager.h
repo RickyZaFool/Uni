@@ -21,7 +21,7 @@ private:
 	int sideLenght;
 	int seed;
 	GridStatus status;
-	float theta;
+	float theta = 0;
 	bool ordered;
 	
 }
