@@ -5,6 +5,7 @@
 #include <TApplication.h>
 #include <TCanvas.h>
 #include <TSystem.h>
+#include <TStyle.h>
 
 
 Grid::Grid(int sideLength, GridStatus status){
@@ -170,6 +171,7 @@ bool Grid::IsOccupied(int X, int Y){
 
 void Grid::PaintTheGrid(){
     TH2D histo("histo", "Sim", SideLength, 0.0, SideLength, SideLength, 0.0, SideLength);
+    gStyle->SetPalette(kInvertedDarkBodyRadiator);
     for(int spot = 0; spot < SideLength*SideLength; spot++){
         histo.SetBinContent(XOfPosition(spot)+1,YOfPosition(spot)+1,grid[spot]);
     }
@@ -188,4 +190,35 @@ int Grid::GetSideLength(){
 
 int Grid::GetSeed(){
     return Seed;
+}
+
+void Grid::Move(int particle, Direction direction){
+    if(grid[position]){
+        int position = PosOfParticle(particle);
+        int newPos = position;
+        switch (direction)
+        {
+        case Direction::UP:
+            newPos = UpNeighbor(position);
+            break;
+        case Direction::DOWN:
+            newPos = DownNeighbor(position);
+            break;
+        case Direction::LEFT:
+            newPos = LeftNeighbor(position);
+            break;
+        case Direction::RIGHT:
+            newPos = RightNeighbor(position);
+            break;
+        }
+        if(!grid[newPos]){
+            grid[position] = 0;
+            grid[newPos] = 1;
+            positions[particle] = newPos;
+        }
+    }
+    else
+    {
+        std::cout << "WARNING: TRYING TO MOVE A NON EXISTENT PARTICLE" << std::endl; // DEBUG
+    }
 }

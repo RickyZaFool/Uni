@@ -9,6 +9,8 @@
 
 enum class GridStatus { Empty };
 
+enum class Direction { UP , DOWN , LEFT , RIGHT};
+
 class Grid
 {
 public:
@@ -51,6 +53,8 @@ public:
     int GetSeed();
 
     //function that moves a particle
+    void Move(int particle);
+    void Move(int particle, Direction direction);
     void Move(int particle, int direction);
 
     
