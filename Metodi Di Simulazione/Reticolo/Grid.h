@@ -52,7 +52,10 @@ public:
 
     //function that moves a particle
     void Move(int particle, int direction);
+    void Move(int particle);
 
+    //function that looks for the number of neighbors of a position
+    int NumberOfNeighbors(int position);
     
 private:
 

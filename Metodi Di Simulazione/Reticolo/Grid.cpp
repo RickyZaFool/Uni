@@ -5,6 +5,7 @@
 #include <TApplication.h>
 #include <TCanvas.h>
 #include <TSystem.h>
+#include <TStyle.h>
 
 
 Grid::Grid(int sideLength, GridStatus status){
@@ -173,12 +174,15 @@ void Grid::PaintTheGrid(){
     for(int spot = 0; spot < SideLength*SideLength; spot++){
         histo.SetBinContent(XOfPosition(spot)+1,YOfPosition(spot)+1,grid[spot]);
     }
+    gStyle->SetOptStat(0);
+    gStyle->SetPalette(kInvertedDarkBodyRadiator);
     histo.Draw("Colz");
     gPad->Update();
     gSystem->ProcessEvents();
 }
 
 int Grid::GetNumberOfParticles(){
+    NumberOfParticles = positions.size();
     return NumberOfParticles;
 }
 
@@ -191,38 +195,39 @@ int Grid::GetSeed(){
 }
 
 void Grid::Move(int particle, int direction){
-    pos = PosOfParticle(particle);
+    int pos = PosOfParticle(particle);
+    int newPos = pos;
     switch (direction)
     {
     case 0:
-        int newPos = UpNeighbor(pos);
-        if(!Grid[newPos]){
-            Grid[newPos] = 1;
-            Grid[pos] = 0;
+        newPos = UpNeighbor(pos);
+        if(!grid[newPos]){
+            grid[newPos] = 1;
+            grid[pos] = 0;
             positions[particle] = newPos;
         }
         break;
     case 1:
-        int newPos = LeftNeighbor(pos);
-        if(!Grid[newPos]){
-            Grid[newPos] = 1;
-            Grid[pos] = 0;
+        newPos = LeftNeighbor(pos);
+        if(!grid[newPos]){
+            grid[newPos] = 1;
+            grid[pos] = 0;
             positions[particle] = newPos;
         }
         break;
     case 2:
-        int newPos = DownNeighbor(pos);
-        if(!Grid[newPos]){
-            Grid[newPos] = 1;
-            Grid[pos] = 0;
+        newPos = DownNeighbor(pos);
+        if(!grid[newPos]){
+            grid[newPos] = 1;
+            grid[pos] = 0;
             positions[particle] = newPos;
         }
         break;
     case 3:
-        int newPos = RightNeighbor(pos);
-        if(!Grid[newPos]){
-            Grid[newPos] = 1;
-            Grid[pos] = 0;
+        newPos = RightNeighbor(pos);
+        if(!grid[newPos]){
+            grid[newPos] = 1;
+            grid[pos] = 0;
             positions[particle] = newPos;
         }
         break;
@@ -231,4 +236,18 @@ void Grid::Move(int particle, int direction){
     default:
         break;
     }
+}
+
+void Grid::Move(int particle){
+    int  dir = Rnd.Rndm()*3;
+    Move(particle, dir);
+}
+
+int Grid::NumberOfNeighbors(int position){
+    int neighs = 0;
+    if(grid[UpNeighbor(position)]){neighs++;}
+    if(grid[DownNeighbor(position)]){neighs++;}
+    if(grid[LeftNeighbor(position)]){neighs++;}
+    if(grid[RightNeighbor(position)]){neighs++;}
+    return neighs;
 }

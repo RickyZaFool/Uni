@@ -1,0 +1,13 @@
+10
+-1
+0
+0
+2
+1
+10e+12
+0.4
+0.2
+100
+400
+
+sideLenght, seed, theta, ordered, number of particles to randomly place, flux of particles/second site, nu hz, E0 K, Eb, Tmin K, Tmax K
