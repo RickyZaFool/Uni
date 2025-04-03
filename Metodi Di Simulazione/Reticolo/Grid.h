@@ -14,7 +14,7 @@ class Grid
 public:
 
     //constructors
-    Grid(int sideLength, GridStatus status);                                              //This constructors creates a completely void grid.
+    Grid(int sideLength, GridStatus status);                                              //This constructors creates a completely empty or full grid.
     Grid(int sideLength, int seed = -1, float theta = 0.5, bool ordered = false);
     
     //functions that handle the coordinates
