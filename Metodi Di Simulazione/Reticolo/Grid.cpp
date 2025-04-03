@@ -189,3 +189,46 @@ int Grid::GetSideLength(){
 int Grid::GetSeed(){
     return Seed;
 }
+
+void Grid::Move(int particle, int direction){
+    pos = PosOfParticle(particle);
+    switch (direction)
+    {
+    case 0:
+        int newPos = UpNeighbor(pos);
+        if(!Grid[newPos]){
+            Grid[newPos] = 1;
+            Grid[pos] = 0;
+            positions[particle] = newPos;
+        }
+        break;
+    case 1:
+        int newPos = LeftNeighbor(pos);
+        if(!Grid[newPos]){
+            Grid[newPos] = 1;
+            Grid[pos] = 0;
+            positions[particle] = newPos;
+        }
+        break;
+    case 2:
+        int newPos = DownNeighbor(pos);
+        if(!Grid[newPos]){
+            Grid[newPos] = 1;
+            Grid[pos] = 0;
+            positions[particle] = newPos;
+        }
+        break;
+    case 3:
+        int newPos = RightNeighbor(pos);
+        if(!Grid[newPos]){
+            Grid[newPos] = 1;
+            Grid[pos] = 0;
+            positions[particle] = newPos;
+        }
+        break;
+    
+    
+    default:
+        break;
+    }
+}
