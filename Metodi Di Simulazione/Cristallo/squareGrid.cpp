@@ -3,7 +3,7 @@
 #include <cmath>
 #include <array>
 
-squareGrid::squareGrid(int sideLenght, double startingPercentageCoverage, bool startsOrdered) {
+squareGrid::squareGrid(int sideLenght, double startingPercentageCoverage, int startsOrdered) {
     if (sideLenght <= 0) {
         throw std::invalid_argument("Side length must be a positive integer.");
     }
@@ -262,4 +262,29 @@ void squareGrid::moveOccupant(int fromX, int fromY, int toX, int toY) {
 
 void squareGrid::moveOccupant(std::array<int, 2> fromCoordinates, std::array<int, 2> toCoordinates) {
     moveOccupant(fromCoordinates[0], fromCoordinates[1], toCoordinates[0], toCoordinates[1]); // Move occupant using coordinates
+}
+
+int squareGrid::numberOfNeighbors(int x, int y) const {
+    if (x < 0 || x >= _sideLenght || y < 0 || y >= _sideLenght) {
+        throw std::out_of_range("Coordinates out of range.");
+    }
+    int count = 0;
+    // Check all four neighbors
+    if (isCellFilled(leftNeighborIndex(x, y))) count++;
+    if (isCellFilled(rightNeighborIndex(x, y))) count++;
+    if (isCellFilled(topNeighborIndex(x, y))) count++;
+    if (isCellFilled(bottomNeighborIndex(x, y))) count++;
+    return count;
+}
+
+int squareGrid::numberOfNeighbors(int index) const {
+    if (index < 0 || index >= _sideLenght * _sideLenght) {
+        throw std::out_of_range("Index out of range.");
+    }
+    std::array<int, 2> coordinates = indexToCoordinates(index);
+    return numberOfNeighbors(coordinates[0], coordinates[1]); // Count neighbors using coordinates
+}
+
+int squareGrid::numberOfNeighbors(std::array<int, 2> coordinates) const {
+    return numberOfNeighbors(coordinates[0], coordinates[1]); // Count neighbors using coordinates
 }

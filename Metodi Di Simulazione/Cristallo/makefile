@@ -6,7 +6,7 @@ LIBSROOT   = `root-config --glibs`
 all: Main
 
 Main: Main.cpp
-	$(CC) $(CFLAGS) -o Main Main.cpp squareGrid.cpp gridPainter.cpp $(CFLAGSROOT) $(LIBSROOT)
+	$(CC) $(CFLAGS) -o Main Main.cpp squareGrid.cpp gridPainter.cpp crystalDeposit.cpp $(CFLAGSROOT) $(LIBSROOT)
 
 Clean:
 	rm -f Main *.o

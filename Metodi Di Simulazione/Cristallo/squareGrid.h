@@ -16,7 +16,7 @@ class squareGrid{
     public:
         
         // Constructor
-        squareGrid(int sideLenght, double startingPercentageCoverage = 0, bool startsOrdered = false); // Starting percentage coverage should be between 0 and 1. If not ordered, the grid will be filled randomly.
+        squareGrid(int sideLenght, double startingPercentageCoverage = 0, int startsOrdered = 0); // Starting percentage coverage should be between 0 and 1. If not ordered, the grid will be filled randomly.
 
         // Coordinates and index conversion
         std::array<int, 2> indexToCoordinates(int index) const;
@@ -60,6 +60,11 @@ class squareGrid{
         void moveOccupant(int fromX, int fromY, int toX, int toY);
         void moveOccupant(int fromIndex, int toIndex);
         void moveOccupant(std::array<int, 2> fromCoordinates, std::array<int, 2> toCoordinates);
+
+        // Number of neighbors
+        int numberOfNeighbors(int x, int y) const;
+        int numberOfNeighbors(int index) const;
+        int numberOfNeighbors(std::array<int, 2> coordinates) const;
 
         // Delete grid
         ~squareGrid();
