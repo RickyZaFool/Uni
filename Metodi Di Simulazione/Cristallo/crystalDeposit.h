@@ -47,8 +47,9 @@ public:
 private:
     double _temperature; // Temperature of the crystal deposit
     double _flux;        // Flux of the crystal deposit
-    double _boundEnergyOfNoNeighbor = 0.4; // In eV
-    double _boundEnergyOfEachNeighbor = 0.2; // In eV
+    double _boundEnergyOfNoNeighbor = 0.4 * 1.602176634e-19; // In J
+    double _boundEnergyOfEachNeighbor = 0.2 * 1.602176634e-19; // In J
+
     double _vibrationFrequency = 10e12; // Vibration frequency of the crystal deposit
     double _boltzmannConstant = 1.380649e-23; // Boltzmann constant in J/K
     int _numberOfSteps = 1000; // Number of steps for the simulation
@@ -66,7 +67,14 @@ private:
     void initializeCellVectors(); // initialize vectors based on current state of the grid
     void updateCellVectorsDiffusion(int cellIndex, int hasJustMoved, int moveDirection); // Update the vectors after a diffusion step
     
-    double calculateTotalWeight() const;
+
+    // Tresholds for the various moves
+    double _tresholdForNoNeighbors = 0; // Treshold for moving from a cell with no neighbors
+    double _tresholdForOneNeighbor = 0; // Treshold for moving from a cell with one neighbor
+    double _tresholdForTwoNeighbors = 0; // Treshold for moving from a cell with two neighbors
+    double _tresholdForThreeNeighbors = 0; // Treshold for moving from a cell with three neighbors
+    double _tresholdForDeposit = 0; // Treshold for depositing a new cell
+    double calculateTotalWeight();
 
     void diffuse(int numberOfNeighbors); // Move one random cell with the given number of neighbors
     void deposit(); // Deposit a new cell in the grid

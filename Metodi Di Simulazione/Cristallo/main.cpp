@@ -1,5 +1,6 @@
 #include "squareGrid.h"
 #include "gridPainter.h"
+#include "crystalDeposit.h"
 #include <TApplication.h>
 #include <iostream>
 #include <fstream>
@@ -38,14 +39,26 @@ int main(int argc, char** argv) {
     }
 
     // Create a square grid
-    squareGrid grid(sideLength, startingPercentageCoverage, startsOrdered);
-
+    CrystalDeposit deposit(sideLength, startingPercentageCoverage, startsOrdered);
+    deposit.setFlux(0.01666666666); // Set the flux to 0.01666666666
+    deposit.setTemperature(300); // Set the temperature to 300 K
+    squareGrid grid = deposit.getGrid();
     // Create a grid painter for the square grid
     gridPainter painter(grid);
+    
+    for(int i = 0; i < 10000000; ++i) {
+        deposit.step(); // Simulate a step of crystal growth
+        if (i % 100000 == 0){
+            std::cout << i / 10000000.0 * 100 << "% completed." << std::endl;
+        }        
+        if (i % 250000 == 0) { 
+            std::cout << " drawing " << std::endl;
+            grid = deposit.getGrid();
+            painter.drawGrid();
+        }
+    }
 
-    // Draw the grid
-    painter.drawGrid();
-
+    std::cout <<100 << "% completed." << std::endl;
     // Run the application
     app.Run();
 

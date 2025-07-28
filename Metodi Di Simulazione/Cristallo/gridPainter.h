@@ -15,5 +15,5 @@ private:
     const squareGrid& _grid; // Reference to the squareGrid object
     TH2D* _histogram; // Histogram to represent the grid
     TCanvas* _canvas; // Canvas to draw the histogram
-
+    TLegend* legend; // Legend for the histogram
 };

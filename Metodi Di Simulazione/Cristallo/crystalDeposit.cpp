@@ -1,6 +1,8 @@
 #include "crystalDeposit.h"
 #include <stdexcept>
 #include <cmath>
+#include <algorithm>
+#include <iostream>
 
 double CrystalDeposit::getTemperature() const {
     return _temperature;
@@ -216,8 +218,9 @@ void CrystalDeposit::updateCellVectorsDiffusion(int cellIndex, int hasJustMoved,
                 // Cell had three neighbors, now it has four
                 _cellsWithThreeNeighbors.erase(std::remove(_cellsWithThreeNeighbors.begin(), _cellsWithThreeNeighbors.end(), cellIndex), _cellsWithThreeNeighbors.end());
                 _cellsWithFourNeighbors.push_back(cellIndex);
+                break;
             default:
-                throw std::invalid_argument("Invalid number of neighbors for updating cell vectors.");
+                throw std::invalid_argument(static_cast<std::string>("Invalid number of neighbors for updating cell vectors: " + std::to_string(neighbors)));
         }
     }
 }
@@ -382,3 +385,49 @@ void CrystalDeposit::deposit(){
     }
 }
 
+double CrystalDeposit::calculateTotalWeight() {
+    // Calculate the total weight based on the current parameters
+    double totalWeight = 0.0;
+    totalWeight += _vibrationFrequency * exp( - (_boundEnergyOfNoNeighbor) / (_boltzmannConstant * _temperature) )  * _cellsWithNoNeighbors.size();
+    _tresholdForNoNeighbors = totalWeight; // Set the threshold for no neighbors
+    totalWeight += _vibrationFrequency * exp( - (_boundEnergyOfNoNeighbor + _boundEnergyOfEachNeighbor) / (_boltzmannConstant * _temperature) )  * _cellsWithOneNeighbor.size();
+    _tresholdForOneNeighbor = totalWeight; // Set the threshold for one neighbor
+    totalWeight += _vibrationFrequency * exp( - (_boundEnergyOfNoNeighbor + 2 * _boundEnergyOfEachNeighbor) / (_boltzmannConstant * _temperature) )  * _cellsWithTwoNeighbors.size();
+    _tresholdForTwoNeighbors = totalWeight; // Set the threshold for two neighbors
+    totalWeight += _vibrationFrequency * exp( - (_boundEnergyOfNoNeighbor + 3 * _boundEnergyOfEachNeighbor) / (_boltzmannConstant * _temperature) )  * _cellsWithThreeNeighbors.size();
+    _tresholdForThreeNeighbors = totalWeight; // Set the threshold for three neighbors
+    totalWeight += _weightOfDeposition;
+    _tresholdForDeposit = totalWeight; // Set the threshold for deposition
+    return totalWeight;
+}
+
+void CrystalDeposit::step() {
+    // Calculate the total weight of the deposition
+    double totalWeight = calculateTotalWeight();
+    
+    // Generate a random number to determine the action
+    double randomValue = static_cast<double>(rand()) / RAND_MAX * totalWeight;
+
+    if (randomValue < _tresholdForNoNeighbors) {
+        diffuse(0); // Diffuse from a cell with no neighbors
+    } else if (randomValue < _tresholdForOneNeighbor) {
+        diffuse(1); // Diffuse from a cell with one neighbor
+    } else if (randomValue < _tresholdForTwoNeighbors) {
+        diffuse(2); // Diffuse from a cell with two neighbors
+    } else if (randomValue < _tresholdForThreeNeighbors) {
+        diffuse(3); // Diffuse from a cell with three neighbors
+    } else {
+        deposit(); // Deposit a new cell
+    }
+}
+
+void CrystalDeposit::simulateGrowth(int numberOfSteps) {
+    if (numberOfSteps <= 0) {
+        throw std::invalid_argument("Number of steps must be positive.");
+    }
+    _numberOfSteps = numberOfSteps;
+
+    for (int steps = 0; steps < _numberOfSteps; ++steps) {
+        step(); // Perform a single step of the simulation
+    }
+}   
